@@ -19,9 +19,6 @@ documentação e entrega.
 **Acertos:** organizou corretamente a ordem das dependências (banco antes do
 script, secrets antes do workflow).
 
-**Ajustes do grupo:** _preencher — ex.: adaptamos os nomes dos responsáveis
-por etapa, confirmamos prazos com o professor, etc._
-
 ---
 
 ## 2. Criação do banco de dados (`sql/setup.sql`)
@@ -42,8 +39,7 @@ habilitado com política de leitura pública, e GRANTs separados para
 evento é um ponto; eventos com geometria em polígono precisam de tratamento
 à parte (ficam só no campo `geometrias`, sem latitude/longitude).
 
-**Ajustes do grupo:** _preencher — ex.: testamos o SQL no editor do Supabase,
-conferimos se as tabelas apareceram no Table Editor._
+**Outras informações:** o SQL foi testado no editor do SupaBase e as tabelas foram verificada no Table Editor.
 
 ---
 
@@ -62,9 +58,6 @@ em caso de falha.
 **Acertos:** separar deduplicação do envio evitou o erro de chave duplicada
 já conhecido de atividades anteriores.
 
-**Ajustes do grupo:** _preencher — ex.: alteramos EONET_DAYS para X dias,
-ajustamos o BATCH_SIZE, corrigimos algum campo após testar com dados reais._
-
 ---
 
 ## 4. Workflow do GitHub Actions (`update-data.yml`)
@@ -81,9 +74,6 @@ minutos.
 nome incorreto (`sql/sql.setup`); foi necessário renomear para
 `sql/setup.sql` antes do workflow funcionar.
 
-**Ajustes do grupo:** _preencher — ex.: alteramos o horário do cron, demos
-nome diferente ao job._
-
 ---
 
 ## 5. Painel (`index.html`)
@@ -96,8 +86,7 @@ atualização (lida da tabela `execucoes`) e sanitização de dados externos.
 coloridos por categoria, filtros por categoria e status, e função
 `escapeHtml()` aplicada a todo valor vindo do banco antes de inserir no DOM.
 
-**Ajustes do grupo:** _preencher — ex.: preenchemos a URL e a chave anon do
-Supabase, ajustamos as cores das categorias, trocamos o texto do rodapé._
+**Outras informações:** a URL e a chave anos do SupaBase foram preenchidas.
 
 ---
 
@@ -108,6 +97,3 @@ instruções de reprodução, e este histórico de interação com IA.
 
 **Resposta da IA:** README estruturado conforme exigido na Tabela 05 do
 edital (descrição, arquitetura, links, como configurar).
-
-**Ajustes do grupo:** _preencher — ex.: completamos a tabela de divisão de
-responsabilidades e os links definitivos após publicar o painel._
