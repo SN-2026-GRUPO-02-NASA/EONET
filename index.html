@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EONET — Observatório de Eventos Naturais</title>
+<style>
+  :root{
+    --ink:#0c1420;
+    --panel:#121d2e;
+    --line:#223349;
+    --text:#dfe8f2;
+    --muted:#7f93ab;
+    --fire:#e8793c;
+    --storm:#4fb3d9;
+    --quake:#c97fd4;
+    --ice:#7fd4b8;
+    --default:#e8b94c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ink); color:var(--text);
+    font-family: "Iowan Old Style","Georgia",serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:40px 24px 80px;}
+  header{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:28px;}
+  h1{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-weight:700; font-size:2rem; letter-spacing:-0.02em;
+    margin:0 0 6px;
+  }
+  .sub{color:var(--muted); font-size:1rem; max-width:62ch;}
+  .meta-row{
+    display:flex; gap:20px; flex-wrap:wrap; margin-top:18px;
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:0.85rem; color:var(--muted);
+  }
+  .meta-row b{color:var(--text); font-weight:600;}
+  .controls{
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+    margin-bottom:22px; font-family:"Helvetica Neue",Arial,sans-serif;
+  }
+  select{
+    background:var(--panel); color:var(--text); border:1px solid var(--line);
+    padding:9px 12px; border-radius:6px; font-size:0.9rem; font-family:inherit;
+  }
+  .count{color:var(--muted); font-size:0.85rem;}
+  .grid{display:grid; gap:14px;}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; display:grid; grid-template-columns:4px 1fr; gap:16px;
+  }
+  .card .bar{border-radius:3px;}
+  .card h3{margin:0 0 6px; font-size:1.1rem; font-weight:600;}
+  .card .row{
+    display:flex; gap:14px; flex-wrap:wrap;
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:0.8rem; color:var(--muted);
+  }
+  .tag{
+    display:inline-block; padding:2px 9px; border-radius:20px;
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:0.75rem;
+  }
+  .card a{color:var(--storm); text-decoration:none; border-bottom:1px solid transparent;}
+  .card a:hover{border-color:var(--storm);}
+  .empty, .loading{
+    color:var(--muted); font-family:"Helvetica Neue",Arial,sans-serif;
+    padding:40px 0; text-align:center;
+  }
+  footer{
+    margin-top:50px; padding-top:20px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:0.8rem; font-family:"Helvetica Neue",Arial,sans-serif;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Observatório de Eventos Naturais</h1>
+    <p class="sub">Incêndios, tempestades, erupções e outros eventos captados pelo EONET da NASA, coletados automaticamente e armazenados em banco próprio.</p>
+    <div class="meta-row">
+      <span>Última coleta: <b id="ultima-atualizacao">carregando…</b></span>
+      <span id="status-execucao"></span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <select id="filtro-categoria">
+      <option value="">Todas as categorias</option>
+    </select>
+    <select id="filtro-status">
+      <option value="">Abertos e fechados</option>
+      <option value="aberto">Somente abertos</option>
+      <option value="fechado">Somente fechados</option>
+    </select>
+    <span class="count" id="contador"></span>
+  </div>
+
+  <div id="lista" class="grid">
+    <div class="loading">Carregando eventos…</div>
+  </div>
+
+  <footer>
+    Fonte: NASA EONET · Grupo 02 · Dados atualizados automaticamente via GitHub Actions
+  </footer>
+
+</div>
+
+<script>
+  // ---- Preencha com os dados do seu projeto Supabase ----
+  const SUPABASE_URL = "https://dzyotfcoqeeckiucfecg.supabase.co"; // Project URL
+  const SUPABASE_ANON_KEY = "sb_publishable_YsROhC7HciaWXvTDZfzM2A_myOtYBZ2"; // chave anon, pública
+  // ---------------------------------------------------------
+
+  const CORES = {
+    "Wildfires": "var(--fire)",
+    "Severe Storms": "var(--storm)",
+    "Volcanoes": "var(--quake)",
+    "Sea and Lake Ice": "var(--ice)",
+  };
+
+  function escapeHtml(valor) {
+    if (valor === null || valor === undefined) return "";
+    return String(valor)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function corCategoria(nome) {
+    return CORES[nome] || "var(--default)";
+  }
+
+  async function consultarSupabase(caminho) {
+    const resp = await fetch(`${SUPABASE_URL}/rest/v1/${caminho}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    });
+    if (!resp.ok) throw new Error(`Erro ${resp.status} ao consultar Supabase`);
+    return resp.json();
+  }
+
+  function formatarData(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    return d.toLocaleString("pt-BR", { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function montarCard(ev) {
+    const cor = corCategoria(ev.categoria_titulo);
+    const localizacao = (ev.latitude && ev.longitude)
+      ? `${ev.latitude.toFixed(2)}, ${ev.longitude.toFixed(2)}`
+      : "geometria não pontual";
+    return `
+      <div class="card">
+        <div class="bar" style="background:${cor}"></div>
+        <div>
+          <h3>${escapeHtml(ev.titulo)}</h3>
+          <div class="row">
+            <span class="tag" style="background:${cor}22;color:${cor}">${escapeHtml(ev.categoria_titulo || "Sem categoria")}</span>
+            <span>${ev.fechado ? "Encerrado" : "Em curso"}</span>
+            <span>${escapeHtml(formatarData(ev.data_ultima_geometria))}</span>
+            <span>${escapeHtml(localizacao)}</span>
+          </div>
+          ${ev.link ? `<p><a href="${escapeHtml(ev.link)}" target="_blank" rel="noopener">Ver na fonte original →</a></p>` : ""}
+        </div>
+      </div>`;
+  }
+
+  function popularFiltroCategorias(eventos) {
+    const select = document.getElementById("filtro-categoria");
+    const categorias = [...new Set(eventos.map(e => e.categoria_titulo).filter(Boolean))].sort();
+    categorias.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderizar(eventos) {
+    const lista = document.getElementById("lista");
+    const contador = document.getElementById("contador");
+    if (eventos.length === 0) {
+      lista.innerHTML = `<div class="empty">Nenhum evento encontrado para este filtro.</div>`;
+    } else {
+      lista.innerHTML = eventos.map(montarCard).join("");
+    }
+    contador.textContent = `${eventos.length} evento(s)`;
+  }
+
+  async function iniciar() {
+    try {
+      const eventos = await consultarSupabase(
+        "eonet_eventos?select=*&order=data_ultima_geometria.desc&limit=200"
+      );
+      popularFiltroCategorias(eventos);
+      renderizar(eventos);
+
+      const aplicarFiltros = () => {
+        const cat = document.getElementById("filtro-categoria").value;
+        const status = document.getElementById("filtro-status").value;
+        let filtrados = eventos;
+        if (cat) filtrados = filtrados.filter(e => e.categoria_titulo === cat);
+        if (status === "aberto") filtrados = filtrados.filter(e => !e.fechado);
+        if (status === "fechado") filtrados = filtrados.filter(e => e.fechado);
+        renderizar(filtrados);
+      };
+      document.getElementById("filtro-categoria").addEventListener("change", aplicarFiltros);
+      document.getElementById("filtro-status").addEventListener("change", aplicarFiltros);
+    } catch (e) {
+      document.getElementById("lista").innerHTML =
+        `<div class="empty">Não foi possível carregar os dados. Tente novamente mais tarde.</div>`;
+      console.error(e);
+    }
+
+    try {
+      const execucoes = await consultarSupabase(
+        "execucoes?select=*&order=iniciado_em.desc&limit=1"
+      );
+      if (execucoes.length > 0) {
+        const ultima = execucoes[0];
+        document.getElementById("ultima-atualizacao").textContent = formatarData(ultima.finalizado_em || ultima.iniciado_em);
+        document.getElementById("status-execucao").textContent = `· status: ${ultima.status}`;
+      } else {
+        document.getElementById("ultima-atualizacao").textContent = "sem registros ainda";
+      }
+    } catch (e) {
+      document.getElementById("ultima-atualizacao").textContent = "indisponível";
+      console.error(e);
+    }
+  }
+
+  iniciar();
+</script>
+</body>
+</html>
