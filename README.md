@@ -1,4 +1,4 @@
-# EONET - Pipeline de Dados da NASA
+# EONET — Pipeline de Dados da NASA
 
 Pipeline de dados completo a partir da API aberta **EONET** (Earth Observatory
 Natural Event Tracker) da NASA, que rastreia eventos naturais em curso no
@@ -9,6 +9,9 @@ gelo marinho e lacustre, entre outros.
 
 ## Arquitetura
 
+```
+EONET API  -->  GitHub Actions (cron diário)  -->  Supabase (PostgreSQL)  -->  GitHub Pages (index.html)
+```
 
 1. **Coleta** — `scripts/fetch_nasa.py` consulta `eonet.gsfc.nasa.gov/api/v3/events`,
    normaliza os campos e deduplica os registros.
