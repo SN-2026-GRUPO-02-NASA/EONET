@@ -64,12 +64,12 @@ EONET/
 
 | Área | Responsável |
 |---|---|
-| Pipeline (`fetch_nasa.py`, workflow) | _preencher_ |
-| Banco de dados (`setup.sql`, modelagem) | _preencher_ |
-| Painel (`index.html`) | _preencher_ |
-| Documentação e apresentação | _preencher_ |
+| Pipeline (`fetch_nasa.py`, workflow) | _Ikaro_ |
+| Banco de dados (`setup.sql`, modelagem) | _Antonela_ |
+| Painel (`index.html`) | _Antonela e Ikaro_ |
+| Documentação e apresentação | _Brenda_ |
 
 ## Uso de IA generativa
 
-_Preencher: utilizada ou não; se sim, qual trilha e ver `docs/ai-interaction.md`
+_Preencher: A IA generativa Claude foi utilizada para o desenvolvimento do projeto, mais informações estão disponíveis em `docs/ai-interaction.md`
 e `docs/reflexao.md`._
