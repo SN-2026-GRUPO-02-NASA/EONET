@@ -7,46 +7,24 @@
 
 ## 1. Onde a IA ajudou
 
-_Preencher: em que etapas a IA realmente acelerou o trabalho ou evitou
-erros? Ex.: estruturar o SQL com RLS e GRANTs corretos de primeira, lembrar
-da deduplicação antes do upsert, etc. Seja específico — cite a etapa, não
-apenas "ajudou em tudo"._
+_A IA generativa ajudou durante todo o projeto. Na estruturação do SQL, com  RLS e GRANTs, no Scripts e Workflows. Ela foi uma ferramente essencial e necessária para a construção do projeto, auxiliando durante todo o processo de desenvolvimento. Ela permitiu que diversas fases fossem feitas com mais facilidade e agilidade, evitando erros. 
 
 ## 2. Onde a IA errou ou deixou lacunas
 
-_Preencher: o que precisou de correção, complementação ou não funcionou de
-primeira? Exemplos de pontos conhecidos deste projeto que o grupo deve
-verificar e relatar com a própria experiência:_
-
-- _O script assume que a geometria mais recente de um evento é sempre um
-  ponto; eventos com geometria em polígono ficam sem latitude/longitude
-  diretas. Isso afetou a visualização de algum evento específico?_
-- _O agendamento (cron) do workflow foi definido com um horário padrão —
-  fez sentido para o grupo ou precisou ser ajustado?_
-- _Alguma tentativa de nomear ou organizar arquivos (como o `setup.sql`)
-  precisou ser corrigida pelo grupo?_
+_Poucas correções dos materiais fornecidos pela IA foram feitas. Como, por exemplo, algumas substituições em arquivos, mudanças de nomes e reescrita de parágrafos. De modo geral, a IA generativa garantiu a precisão dos fatos e conteúdos so projeto. 
 
 ## 3. O que o grupo corrigiu ou decidiu por conta própria
 
-_Preencher: decisões de modelagem, valores de configuração (`EONET_DAYS`,
-`BATCH_SIZE`, horário do cron), textos do painel, cores, ou qualquer ajuste
-que não veio pronto da IA e exigiu critério do grupo._
+_Index (textos, cores, design), correções de modelagem, produção de arquivos informativos.
 
 ## 4. O que o grupo aprendeu no processo
 
-_Preencher: conceitos técnicos que ficaram mais claros ao revisar o código
-gerado (ex.: por que RLS é necessário, como funciona um upsert com
-constraint UNIQUE, diferença entre a chave anon e a service_role). O
-objetivo aqui é mostrar compreensão real, não só reprodução do código._
+_Alguns conceitos acabaram tornando-se mais claros durante o processo de construção e revisão do projeto. A necessidade de RLS e a diferença entre chaves do SupaBase (annos e service_role) são exemplos de aprendizado.
 
 ## 5. Limitações percebidas no uso de IA para este tipo de tarefa
 
-_Preencher: em que momentos ficou claro que a revisão humana era
-indispensável? Houve algo que a IA não podia verificar sozinha (ex.: se os
-dados fazem sentido cientificamente, se a interface está realmente legível,
-se as credenciais foram configuradas certas)?_
+_A IA generativa possui algumas limitações. Aplicação de dados do Supabase, verificação da interface e dados reais são exemplos de limitação da IA, onde a revisão humana torna-se necessária.
 
 ## 6. Conclusão do grupo
 
-_Preencher: uma avaliação final e honesta — o uso de IA valeu a pena neste
-projeto? Em que tipo de etapa vocês confiariam mais nela, e em qual menos?_
+_O uso da IA generativa foi essencial para a produção do projeto. Ela auxiliou na maioria das fases, possibilitando que o desenvolvimento do projeto ocorresse de forma simplifica e ágil.
