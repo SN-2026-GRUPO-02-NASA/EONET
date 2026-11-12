@@ -72,4 +72,4 @@ EONET/
 ## Uso de IA generativa
 
 A IA generativa Claude foi utilizada para o desenvolvimento do projeto, mais informações estão disponíveis em `docs/ai-interaction.md`
-e `docs/reflexao.md`._
+e `docs/reflexao.md`.
